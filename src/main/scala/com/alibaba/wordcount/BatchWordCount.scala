@@ -3,9 +3,9 @@ package com.alibaba.wordcount
 import org.apache.flink.api.scala._
 
 /**
-  * 批处理
+  * 批处理 word count
   */
-object WordCount {
+object BatchWordCount {
   def main(args: Array[String]): Unit = {
     //创建一个批处理的执行环境
     val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment;
@@ -17,8 +17,9 @@ object WordCount {
       .map((_, 1)) //转换成一个二元组 （word， count）
       .groupBy(0) //以二元组中第一个元素作为 Key 分组
       .sum(1) //聚合二元组中第二个元素的值
-
-    //打印输出
+    println("------- 输入 --------")
+    inputDataSet.print()
+    println("------- 批处理完 --------")
     resultDataSet.print()
   }
 }
