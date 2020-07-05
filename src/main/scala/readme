@@ -1,0 +1,38 @@
+下载 flink https://flink.apache.org/downloads.html
+比如放在文件夹 /Users/john/Desktop/学习/flink/tutorial/资料/downloadPackage/flink-1.7.2
+
+1、flink 文件结构
+    lib
+        支持 standalone 本地部署
+        支持 hadoop-yarn 部署，需要有 hadoop 支持的版本 download -> 找到 flink hadoop 版本，下载后，放到 lib 目录下
+        支持 k8s 容器部署
+    bin
+        flink: 提交 job, 取消 job
+        jobManager.sh: 分配任务，调度任务
+        taskManager.sh: 具体到最后要执行的任务 == worker
+        yarn-session.sh: yarn 提交 flink 的 job
+        start-cluster: 启动 flink 集群
+        stop-cluster: 停止 flink 集群
+
+    conf
+        flink-conf.yaml
+            jobmanager.rpc.address: job manager 地址，任务分发器 地址
+            jobmanager.rpc.port： job manager 端口号，任务分发器 端口号
+            jobmanager.heap.size: 任务分配器内存大小
+            taskmanager.heap.size: 所有任务 worker 所有内存
+            taskmanager.numberOfTaskSlots: 能够并行执行的最大任务数
+            parallelism.default: 默认并行数
+            jobManager.execution.failover-strategy: region 失败后，重新执行失败部分的地方，而不是全部重启
+            rest.port: web 页面运维控制台，任务的提交，监控
+        master
+            配置 master 地址
+        slaves
+            配置 slaves 的地址
+
+2、启动
+    /bin/./start-cluster.sh
+    打开 http://localhost:8081/#/overview 可以看到 dashboard
+
+3、部署
+    应用程序打包成 jar 包
+    在 dashbord -> Submit New Job ->  upload target 中 jar 包 -> show plan 看执行计划
