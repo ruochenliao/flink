@@ -35,4 +35,7 @@
 
 3、部署
     应用程序打包成 jar 包
-    在 dashbord -> Submit New Job ->  upload target 中 jar 包 -> show plan 看执行计划
+    在 dashbord -> Submit New Job ->  upload target 中 jar 包 -> show plan 看执行计划-> submit
+    job manager -> stdout -> 看输出
+
+    或者用命令行的方式来操作

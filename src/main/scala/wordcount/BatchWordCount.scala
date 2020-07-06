@@ -1,4 +1,4 @@
-package com.alibaba.wordcount
+package wordcount
 
 import org.apache.flink.api.scala._
 

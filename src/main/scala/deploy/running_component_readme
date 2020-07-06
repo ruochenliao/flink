@@ -1,0 +1,7 @@
+运行时组件
+    作业管理器(jobManager)
+    任务管理器(taskManager)
+    资源管理器(resourceManager)
+        管理 slots
+    分发器(dispacher)
+        web UI 提交应用给JobManager，jobManager 向 resourceManager 请求 slot, jobManager

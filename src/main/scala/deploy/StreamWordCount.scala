@@ -1,4 +1,4 @@
-package com.alibaba.wordcount
+package deploy
 
 import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.scala._
@@ -24,20 +24,18 @@ object StreamWordCount {
     //动态地替代 127.0.0.1
     val hostname: String = params.get("hostname")
     //动态地替代 port
-    val port: String = params.get("port")
+    val port: Int = params.getInt("port")
 
     //接收 socket 文本流地址和端口号
-    val inputDataStream : DataStream[String] = env.socketTextStream("127.0.0.1", 7777)
+    val inputDataStream : DataStream[String] = env.socketTextStream(hostname, port)
     //转换操作
     val resultDataStream : DataStream[(String, Int)] = inputDataStream
       .flatMap(_.split(" "))   //空格分词打散所有的 word
-      .setParallelism(2)
       .map((_, 1))                    //转换成 (word, count) 二元组
-      .setParallelism(2)
       .keyBy(0)                //按照第一个元素分组， keyBy 等同于 groupBy, 根据 key 的 hash 来分组
       .sum(1)                //按照第二个元素求和
 
-    resultDataStream.print()
+    resultDataStream.print().setParallelism(1)
     env.execute("stream word count")         //执行流式任务
   }
 }
