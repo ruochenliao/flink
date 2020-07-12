@@ -1,0 +1,20 @@
+窗口（window）就是将无限流切割成有限流的一种方式，它会将流数据分发到有限大小的桶（bucket）中进行分析
+time window
+    滚动窗口
+    滑动窗口
+    会话窗口
+
+count window
+    滚动窗口
+    滑动窗口
+
+
+Time 时间语义
+    event time      事件创建时间
+    ingest time     source 算子获取到数据源时间
+    processing time 处理到的时候的处理时间
+    怎么迟到
+
+窗口也分两类
+    增量聚合函数 (incremental aggregation functions), 有点像全量处理, 比如 ReduceFunction, AggregateFunction
+    全窗口函数 (full window functions), 优点像批量处理, 比如 ProcessWindowFunction
