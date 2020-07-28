@@ -1,5 +1,7 @@
 package streamApi
 
+import org.apache.flink.api.common.functions.RichMapFunction
+import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.scala._
 
 object transformApi {
@@ -80,4 +82,22 @@ object transformApi {
 
     env.execute()
   }
+}
+
+/**
+  * 可以有生命周期方法，还可以获取运行时上下文，进行状态变成
+  */
+class MyRichMapper extends RichMapFunction[SensorReading, Int]{
+
+  override def map(in: SensorReading): Int = in.timestamp.toInt
+
+  override def open(parameters: Configuration): Unit = {
+    //打开连接时候
+  }
+
+  override def close(): Unit = {
+    //销毁连接时
+  }
+  //获取运行时上线文，比如子任务编号
+  //getRuntimeContext.getIndexOfThisSubtask
 }

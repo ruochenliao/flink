@@ -1,0 +1,84 @@
+CEP(Complex Event Processing) 复杂事件处理
+CEP 允许在无休止的事件流当中，检测事件的模式，符合模式的事件按照一定的规则匹配，然后输出用户想要的数据
+
+目标：从有序的简单事件中发现一些高阶特征
+输入：一个或多个由简单事件构成的事件流
+处理：识别简单事件之间的内在联系，多个符合一定规则的简单事件构成复杂事件
+输出：满足规则的复杂事件
+
+
+Flink CEP 提供了 Pattern  API
+设计模式
+    val pattern[Event, _] = Pattern.begin[Event].where(_.getId == 42)
+        .next("middle").subtype(classOf[subEvent]).where(_.getTemp >= 10.0)
+        .followedBy("end").where(_.getName == "end")
+匹配
+    val patternStream: PatternStream[Event] = CEP.pattern(inputDataStream, pattern)
+提取
+    result: DataStream[Alter] = patternStream.select(createAlter(_))
+    select() 以一个 Map[String, Iterable[IN]] 来接收匹配到事件序列，其中 key 就是每个模式的名称，而 value 就是所有接收到的事件的 iterable 类型
+    def selectFn(pattern: Map[String, Iterable[IN]]): OUT = {
+        val startEvent = pattern.get("start").get.next
+        val endEvent = pattern.get("end").next
+        OUT(startEvent, endEvent)
+    }
+
+个体模式
+    组成复杂规则的每一个单独的模式定义
+    单例模式(singleton)
+
+    循环模式(looping)
+
+    量词
+        start.times(4) 循环出现 4 次
+        start.times(4).optional 要么出现 0 次，要么出现 4 次
+        start.times(2,4) 匹配出现 2，3，4次
+        start.times(2,4).greedy
+        start.oneOrMore
+        start.timesOrMore(2).optional.greedy 出现 0次，2次或者多次，并且尽可能多地匹配
+
+     条件
+        CEP 个体模式通过用 .where() .or() until() 来指定条件
+        start.where(event => event.getName.startWith("foo"))
+     组合条件
+        pattern.where(event => ...).or(event => ...)
+        pattern.where(event => ...).where(event => ...)
+     终止条件
+        如果使用 oneOrMore 或者 oneOrMore.optional, 建议使用 .util() 作为终止条件，以便清理状态
+     迭代条件
+        能够对模式之前的所有事件进行处理
+        调用 .where((value, ctx) =>{...})，可以调用 ctx.getEventsForPattern("name")
+
+组合模式
+    多个模式组合起来，就形成了整个的模式序列
+    模式必须以一个"初始模式"开始 val start = Pattern.begin()
+    严格近邻
+        由 .next() 指定
+    宽松近邻
+        由 .followedBy() 指定
+    非确定性宽松近邻
+        由 .followedByAny() 指定
+        对模式 "a followedByAny b"，事件序列 [a, c, b1, b2] 匹配为 {a, b1}, {a, b2}
+    不希望出现某种近邻关系
+        notNext()
+        notFollowedBy() 不想让某个时间
+    需要注意
+        所有模式必须以 .begin() 开始
+        模式序列不能以 .notFollowedBy() 结束
+        not 模式不能用 optional 所修饰
+        此外，还可以为模式指定时间约束，用来要求在多长时间内有效
+            next.within(Time.second(10))
+模式组
+
+
+超时事件的提取
+    当一个模式通过 within 关键字定义了检测窗口时间
+    使用侧输出流获取超时事件序列
+        val patternStream: PatternStream[event] = CEP.pattern(input, pattern)
+        val outputTag = OutputTag[String]("side-output")
+        val result = patternStream.select(outputTag){
+            (pattern:Map[String, Iterable[Event]], timestamp: Long) => TimeoutEvent()
+        }{
+            pattern: Map[String, Iterable[Event]] => ComplexEvent()
+        }
+    val timeoutResult: DataStream<TimeoutEvent> = result.getSideoutput(outputTag)

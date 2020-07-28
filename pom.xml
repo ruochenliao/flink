@@ -38,6 +38,18 @@
             <artifactId>flink-connector-redis_2.11</artifactId>
             <version>1.0</version>
         </dependency>
+        <!-- state -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-statebackend-rocksdb_2.11</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+        <!-- SQL -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-planner_2.11</artifactId>
+            <version>1.10.0</version>
+        </dependency>
     </dependencies>
 
     <build>

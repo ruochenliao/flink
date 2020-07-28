@@ -9,6 +9,8 @@ import org.apache.flink.streaming.api.windowing.time.Time
 import streamApi.SensorReading
 
 /**
+  * waterMark 适用于处理乱序事件的，而正确处理乱序事件，通常结用 waterMark 机制结合 window 来实现
+  *
   * assignTimestampsAndWatermarks
   *   周期性地插入 waterMark： AssignerWithPeriodicWatermarks，比如 BoundedOutOfOrdernessTimestampExtractor 就是周期性的 waterMark
   *   在某些条件下打点式插入 waterMark: AssignerWithPunctuatedWatermarks

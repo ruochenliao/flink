@@ -1,0 +1,34 @@
+Flink 的状态有
+算子状态（operator state）
+    由同一并行任务所处理的所有数据都可以访问到相同状态
+键控状态（keyed state）
+    根据输入流中定义的 key 来维护和访问的
+    Flink 为每个 key 维护一个状态实例，并且具有相同健的所有数据，都分区到同一
+状态后端（state backend）
+    状态的存储，访问以及维护，由一个可插入的组件决定，这个组件就叫做状态后端（state backed）
+    状态后端主要负责两件事：本地的状态管理，以及将检查点（checkpoint）状态写入远程存储
+
+算子状态数据结构
+    列表状态（List State）将状态表示为一组数据的列表
+    联合列表状态（Union List State）和列表状态一样，但是如果发生故障时，从保存点(savePoint) 启动应用程序恢复
+    广播状态（Broadcast state）如果一个算子有多项任务，而他的每项任务状态又相同，那么这种特殊情况最适合应用广播状态。
+
+健控状态数据额结构
+    值状态（value state）
+    列表状态（list state）
+    映射状态（map state）
+    聚合状态（reducing state & aggregating state）
+
+选择一个状态后端
+    内存级的状态后端 MemoryStateBackend
+        会将键控状态作为内存中的对象进行管理，将它们存储在 taskManager 的 JVM 堆上，而将 checkPoint 存储在 jobManager 的内存中
+        特点: 快速，低延迟，但不稳定
+
+    远程的持久文件系统（FileSystem）FsStateBackend
+        将 checkpoint 存到远程文件系统（FileSystem）上，而对于本地状态，跟 MemoryStateBackend 一样，也会存在 TaskManager 的 JVM 堆上
+
+    DocksDBStateBackend
+    将所有状态序列化后，存入本地的 RocksDB 中存储
+
+
+

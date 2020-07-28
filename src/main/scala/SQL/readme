@@ -1,0 +1,7 @@
+Flink 对批处理和流处理，提供了同意的上层 API
+
+Flink 的 SQL 支持基于实现了 SQL 标准的 Apache Calcite
+    SQL/Table API (dynamic tables)
+    DataStreamAPI (Streams, windows)
+    ProcessFunction (Events, state, time)
+
