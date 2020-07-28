@@ -5,3 +5,10 @@ Flink 的 SQL 支持基于实现了 SQL 标准的 Apache Calcite
     DataStreamAPI (Streams, windows)
     ProcessFunction (Events, state, time)
 
+TableEnvironment 可以注册目录 catalog, 并可以基于 Catalog 注册表
+表(Table) 是由一个标识符 (identifier) 来指定的，由3部分组成:
+    1、catalog 名，数据库(database), 表明
+    2、表可以是常规的，也可以是虚拟的（view）
+    3、常规表(Table)一般可以用来描述外部数据，比如文件，数据库表或者消息队列的数据，也可以直接从 DataStream 转换而来
+
+视图(View) 可以从现有的表中创建，通常是 table API 或者 SQL 查询的一个结果集
